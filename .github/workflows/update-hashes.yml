@@ -1,0 +1,31 @@
+name: Update Hashes
+on:
+  workflow_dispatch
+jobs:
+  updateVersionFile:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # See 'Supported distributions' for available options
+          java-version: '17'
+      - name: Output dir
+        run: ls
+      - name: Update Hashes
+        run: java -Dfile.encoding=UTF-8 -jar modpackUpdater.jar
+        env: 
+          HASHES: a
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          title: '[Bot] Updated hashes'
+          body: |
+            Hashes generated
+          branch: |
+            hotfixupdate/${{ github.run_number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HASHES: a
